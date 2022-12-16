@@ -7,7 +7,9 @@ createApp({
         @timeupdate="updateTime"
         ref="video"
         controls>
-            <source src="video.mp4" type="video/mp4">
+        <source :src="videoFileName+'.mkv'" type="video/mkv">
+        <source :src="videoFileName+'.mp4'" type="video/mp4">
+        <source :src="videoFileName+'.webm'" type="video/webm">
             <track
                 class="chaptersTrack"
                 kind="chapters"
@@ -38,6 +40,13 @@ createApp({
             dataUrl: ''
         };
     },
+    computed: {
+        videoFileName: () => {
+            const path = window.location.pathname;
+            const page = path.split('/').pop().split('.')[0];
+            return page;
+        }
+    },
     methods: {
         updateTime() {
             this.currentTime = this.$refs.video.currentTime;
@@ -55,6 +64,7 @@ createApp({
         },
         isCompleted(chapter) {
             return chapter.endTime <= this.currentTime;
+        }
         },
         getVideoFileName() {
             const path = window.location.pathname;
