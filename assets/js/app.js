@@ -25,9 +25,14 @@ createApp({
                 <span class="status-container" role="img" aria-label="Completed item">
                     <span :class="{'status-icon': true, completed: isCompleted(chapter)}">&nbsp;</span>
                 </span>
-                <span :class="{chapters: true, activeChapter: isActive(chapter)}">
-                    Chapter-{{chapter.id}}: {{chapter.text}}
-                </span>
+                <span :class="{chapters: true, activeChapter: isActive(chapter)}">{{chapter.text}}</span>
+        </div>
+    </div>
+    <div ref="loadingOverlay" class="overlay">
+        <div class="overlay__inner">
+            <div class="overlay__content">
+                <span class="spinner"></span>
+            </div>
         </div>
     </div>
 </div>
@@ -65,15 +70,16 @@ createApp({
         isCompleted(chapter) {
             return chapter.endTime <= this.currentTime;
         }
-        },
-        getVideoFileName() {
-            const path = window.location.pathname;
-            const page = path.split('/').pop().split('.')[0];
-            return page;
-        }
+    },
+    beforeMount() {
+        const videoMetadataElement = document.getElementById('video-metadata');
+        videoMetadataElement.src = this.videoFileName + '.js';
     },
     mounted() {
-        const chapters = metadata.chapters.trim();
-        this.$refs.chapters.src = `data:text/vtt;base64,${btoa(chapters)}`;
+        setTimeout(()=>{
+            const chapters = METADATA.chapters.trim();
+            this.$refs.chapters.src = `data:text/vtt;base64,${btoa(chapters)}`;
+            this.$refs.loadingOverlay.style.display = 'none';
+        }, 3000);
     }
 }).mount('#app');
